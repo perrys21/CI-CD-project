@@ -1,0 +1,51 @@
+name: Manual Inference
+
+on:
+  workflow_dispatch:
+    inputs:
+      input_csv:
+        description: "Optional CSV path inside repo checkout (e.g., data/inference.csv)"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  run-inference:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ml.txt
+
+      - name: Download latest ONNX artifact from CI
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: ci.yml
+          workflow_conclusion: success
+          branch: main
+          name: onnx-model
+          path: downloaded-model
+          if_no_artifact_found: fail
+
+      - name: Run inference
+        run: |
+          python scripts/inferance.py --model-dir downloaded-model --input-csv "${{ github.event.inputs.input_csv }}" --output-dir artifacts/inference
+
+      - name: Upload inference artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: inference-output
+          path: artifacts/inference/
+          if-no-files-found: error
