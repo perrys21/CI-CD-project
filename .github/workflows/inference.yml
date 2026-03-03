@@ -9,6 +9,10 @@ on:
         default: ""
         type: string
 
+permissions:
+  actions: read
+  contents: read
+
 jobs:
   run-inference:
     runs-on: ubuntu-latest
@@ -34,7 +38,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: ci.yml
           workflow_conclusion: success
-          branch: main
           name: onnx-model
           path: downloaded-model
           if_no_artifact_found: fail
