@@ -44,6 +44,7 @@ jobs:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+      SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
 
     steps:
       - name: Checkout
@@ -52,9 +53,10 @@ jobs:
           fetch-depth: 0
 
       - name: SonarQube Scan
-        if: ${{ env.SONAR_TOKEN != '' && env.SONAR_HOST_URL != '' && env.SONAR_ORGANIZATION != '' }}
+        if: ${{ env.SONAR_TOKEN != '' && env.SONAR_HOST_URL != '' && env.SONAR_ORGANIZATION != '' && env.SONAR_PROJECT_KEY != '' }}
         uses: SonarSource/sonarqube-scan-action@v6
         with:
           args: >
             -Dsonar.organization=${{ env.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
 
