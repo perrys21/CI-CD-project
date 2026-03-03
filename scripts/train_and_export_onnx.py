@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from sklearn.datasets import load_iris
-from sklearn.linear_model import LogisticRegression
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
+from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
 
 
 def main() -> None:
